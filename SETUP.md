@@ -119,13 +119,13 @@ LOCATION
 
 - Set up environment variables on the analysis workstation or server:
 ```
-    ATSPM_SERVER_INSTANCE
-    ATSPM_DB             
-    ATSPM_USERNAME       
-    ATSPM_PASSWORD       
-    AWS_ACCESS_KEY_ID    
-    AWS_SECRET_ACCESS_KEY
-    AWS_DEFAULT_REGION   
+ATSPM_SERVER_INSTANCE
+ATSPM_DB             
+ATSPM_USERNAME       
+ATSPM_PASSWORD       
+AWS_ACCESS_KEY_ID    
+AWS_SECRET_ACCESS_KEY
+AWS_DEFAULT_REGION   
 ```
 
 - Clone this Github repository to a folder on the analysis workstation or server
@@ -151,10 +151,11 @@ Rscript Monthly_Report_Package.R
 
 ## Publish the Dashboard Online
 
-- Create account on shinyapps.io
+- Create account on shinyapps.io and select plan. Basic or higher is recommended.
 - Open Monthly_Report.Rmd and select "Run Document"
-- Publish dashboard to shinyapps.io
-- In shinyapps.io, go to dashboard and open Monthly_Report application settings
-    - Increase instance size
-    - Adjust Instance idle timeout, if desired
+- Test locally and troubleshoot
+- Once everything looks good, publish the dashboard to shinyapps.io
+- In shinyapps.io, go to dashboard, select the Application, and select Settings (the gear icon)
+    - Increase Instance Size
+    - Adjust Instance Idle Timeout, if desired
 
