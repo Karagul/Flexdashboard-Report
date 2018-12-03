@@ -37,6 +37,7 @@ It requires the following:
 - Set up AWS Athena
     - Create AGENCY_spm Athena database (e.g., gdot_spm, vdot_spm)
     - Create CycleData, DetectionEvents tables
+
     
 ```HiveQL
 CREATE EXTERNAL TABLE `cycledata`(
@@ -79,7 +80,8 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://vdot-spm/detections'```
+  's3://vdot-spm/detections'
+```
 
 
 - Set up AWS IAM permissions  
@@ -89,7 +91,6 @@ LOCATION
         - AmazonAthenaFullAccess
         - IAMUserChangePassword
     - Create a policy called JDBC with the following text:
-
 ```JSON
 {
     "Version": "2012-10-17",
@@ -106,6 +107,7 @@ LOCATION
     ]
 }
 ```
+
 
     - Create user AGENCY (e.g., GDOT, VDOT)
         - Assign to group
@@ -131,7 +133,7 @@ LOCATION
 
 - Create account on shinyapps.io
 - Open Monthly_Report.Rmd and select "Run Document"
-- Publish dashboard to shinyapps.
+- Publish dashboard to shinyapps.io
 - In shinyapps.io, go to dashboard and open Monthly_Report application settings
     - Increase instance size
     - Adjust Instance idle timeout, if desired
