@@ -35,7 +35,7 @@ It requires the following:
         /signal_dashboards
 
     - Create <name>_spm Athena database
-    - Create CycleData, DetectionEvents tables [provide code]
+    - Create CycleData, DetectionEvents tables
     
 ```sql
 CREATE EXTERNAL TABLE `cycledata`(
@@ -57,8 +57,11 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://<name>-spm/cycles'
+  's3://<name>-spm/cycles'```
+  
+    - Create CycleData, DetectionEvents tables
 
+```sql
 CREATE EXTERNAL TABLE `detectionevents`(
   `signalid` int, 
   `phase` int, 
@@ -78,8 +81,7 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://vdot-spm/detections'
-```
+  's3://vdot-spm/detections'```
 
 
     - Create IAM group/user with permissions
