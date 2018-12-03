@@ -5,25 +5,27 @@ Instructions to Implement ATSPM Dashboard
 
 There are several different steps needed to create the dashboard and it is somewhat complex, due to the environment and resources available when it was first created. In addition to the hardware and environment setup, it requires at least a basic knowledge of the Python and R programming languages, understanding of database connections, and the ability to do basic troubleshooting as every IT environment is a bit different. On the last point, a VPN may be required, or proxy authentication, for instance. In the future it is possible the installation of this system may require no understanding of the different programming languages, but that is not the case currently.
 
+This codebase is an adaptation of a system that was originally developed for the Georgia Department of Transportation (GDOT).
+
 For questions, please feel free to contact the developer at [alan.toppen@kimley-horn.com](mailto:alan.toppen@kimley-horn.com?subject=ATSPM%20Dashboard%20Installation%20Question) and I will assist as best I can.
 
-It requires the following:
+The environment requires the following:
 
-- An ATSPM deployment (e.g., [https://traffic.dot.ga.gov/ATSPM](https://traffic.dot.ga.gov/ATSPM)), which consists of a server, database and programs to acquire high-resolution traffic data from signal controllers (see [https://www.fhwa.dot.gov/innovation/everydaycounts/edc_4/atspm.cfm](https://www.fhwa.dot.gov/innovation/everydaycounts/edc_4/atspm.cfm))
+- An ATSPM deployment (e.g., [https://traffic.dot.ga.gov/ATSPM](https://traffic.dot.ga.gov/ATSPM)), which consists of a server, database and programs to acquire high-resolution traffic data from signal controllers (see [this article](https://www.fhwa.dot.gov/innovation/everydaycounts/edc_4/atspm.cfm) on Automated Traffic Signal Performance Measures)
 
 - An analysis workstation or server with:
     - Access to the ATSPM database
-    - A few GB of local storage
+    - Several GB of local storage (requirement is highly dependent on the number of intersections)
     - [Anaconda for Python 3](https://www.anaconda.com/) with requisite packages installed
     - [R](https://www.r-project.org/) and [RStudio](https://www.rstudio.com/) with requisite libraries installed
 
-- An Amazon Web Services (AWS) account.
+- An Amazon Web Services (AWS) account (https://aws.amazon.com/)
 
 - A shinyapps.io account (http://www.shinyapps.io/)
 
 ## Installation Steps
 
-- Set up AWS S3
+- Set up AWS Simple Storage Service (S3)
     - Create AGENCY-spm bucket and subfolder structure (e.g., GDOT-spm, VDOT-spm)
     
         /atspm_det_config
@@ -62,7 +64,7 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://AGENCY-spm/cycles' # e.g., GDOT-spm/cycles, VDOT-spm/cycles
+  's3://AGENCY-spm/cycles' --e.g., GDOT-spm/cycles, VDOT-spm/cycles
 ```
 
 ```HiveQL
@@ -85,7 +87,7 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://AGENCY-spm/detections' # e.g., GDOT-spm/detections, VDOT-spm/detections
+  's3://AGENCY-spm/detections' --e.g., GDOT-spm/detections, VDOT-spm/detections
 ```
 
 
@@ -125,8 +127,13 @@ ATSPM_USERNAME
 ATSPM_PASSWORD       
 AWS_ACCESS_KEY_ID    
 AWS_SECRET_ACCESS_KEY
-AWS_DEFAULT_REGION   
+AWS_DEFAULT_REGION
+PROXY_SERVERNAME
+PROXY_PORT
+PROXY_USERNAME
+PROXY_PASSWORD
 ```
+- Set up ODBC DSN for the ATSPM database, call it "atspm_dsn"
 
 - Clone this Github repository to a folder on the analysis workstation or server
 - Modify Monthly_Report_AWS.yaml
@@ -149,13 +156,22 @@ Rscript Monthly_Report_Calcs.R
 Rscript Monthly_Report_Package.R
 ```
 
+## Modify the dashboard code
+
+The appearance and behavior of the dashboard is defined in the following files: 
+    - Monthly_Report_UI_Functions.R
+    - Monthly_Report.Rmd
+    - style.css
+
+In these files, logos, colors and fonts can all be changed.
+
 ## Publish the Dashboard Online
 
 - Create account on shinyapps.io and select plan. Basic or higher is recommended.
-- Open Monthly_Report.Rmd and select "Run Document"
+- Open Monthly_Report.Rmd in RStudio and select "Run Document"
 - Test locally and troubleshoot
 - Once everything looks good, publish the dashboard to shinyapps.io
-- In shinyapps.io, go to dashboard, select the Application, and select Settings (the gear icon)
+- In the shinyapps.io admin portal (https://www.shinyapps.io/admin/#/dashboard), select the Application, and select Settings
     - Increase Instance Size
     - Adjust Instance Idle Timeout, if desired
 

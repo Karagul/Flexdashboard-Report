@@ -1,0 +1,19 @@
+
+# Monthly_Report config file (yaml format)
+
+#mode: production
+mode: beta
+
+signal_groups:
+    - Northwest Region 
+    - Northern Region
+    - Southwest Region
+    - Eastern Region
+    - Central Region
+
+
+corridors_filename: corridors.feather
+
+
+bucket: agency-spm # TODO: Update GDOT-spm, VDOT-spm, etc.
+
