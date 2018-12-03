@@ -24,7 +24,7 @@ It requires the following:
 ## Installation Steps
 
 - Set up AWS S3
-    - Create <name>-spm bucket and subfolder structure
+    - Create AGENCY-spm bucket and subfolder structure (e.g., GDOT-spm, VDOT-spm)
     
         /atspm_det_config
         
@@ -38,6 +38,7 @@ It requires the following:
 
 - Set up AWS Athena
     - Create AGENCY_spm Athena database (e.g., gdot_spm, vdot_spm)
+    - [Download Athena JDBC Driver](https://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html)
     - Create CycleData, DetectionEvents tables
 
     
@@ -61,8 +62,10 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://<name>-spm/cycles'
+  's3://AGENCY-spm/cycles' # e.g., GDOT-spm/cycles, VDOT-spm/cycles
+```
 
+```HiveQL
 CREATE EXTERNAL TABLE `detectionevents`(
   `signalid` int, 
   `phase` int, 
@@ -82,7 +85,7 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://vdot-spm/detections'
+  's3://AGENCY-spm/detections' # e.g., GDOT-spm/detections, VDOT-spm/detections
 ```
 
 
@@ -92,7 +95,10 @@ LOCATION
         - AmazonS3FullAccess
         - AmazonAthenaFullAccess
         - IAMUserChangePassword
-    - Create a policy called JDBC with the following text:
+    - Create a policy called JDBC with the text below
+    - Create user AGENCY (e.g., GDOT, VDOT)
+        - Assign to group
+        - Create credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION)
 ```JSON
 {
     "Version": "2012-10-17",
@@ -110,9 +116,6 @@ LOCATION
 }
 ```
 
-    - Create user AGENCY (e.g., GDOT, VDOT)
-        - Assign to group
-        - Create credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION)
 
 - Set up environment variables on the analysis workstation or server:
 ```
@@ -125,16 +128,19 @@ LOCATION
     AWS_DEFAULT_REGION   
 ```
 
-- Clone this code to a folder on the analysis workstation or server
-- Create Monthly_Report_AWS.yaml
-- Create Monthly_Report_calcs.yaml
-- Create Monthly_Report.yaml
-- Create corridors file (adopt from Signals table in Controller_Event_Log in ATSPM Database
-- Install R and RStudio
+- Clone this Github repository to a folder on the analysis workstation or server
+- Modify Monthly_Report_AWS.yaml
+- Modify Monthly_Report_calcs.yaml
+- Modify Monthly_Report.yaml
+- Populate corridors file
 
 ## Run Calculations
 
-Unlike the ATSPM site, which runs all calculations from the raw data in the database for every chart requested by the user, this dashboard runs calculations daily and stores the aggregated data tables that are then read by the dashboard code to create the plots. Therefore, the analysis workstation or server should schedule the calculation scripts to run each day.
+Unlike the ATSPM site, which runs all calculations from the raw data in the database for every chart requested by the user, this dashboard runs calculations daily and stores the aggregated data tables that are then read by the dashboard code to present the monthly metrics and plots. Therefore, the analysis workstation or server should schedule the calculation scripts to run each day.
+
+Depending on the workstation on which the calculations are run, the nightly calculations may take ~20 minutes for a few dozen intersections to ~4 hours for a few thousand intersections.
+
+Because the ATSPM database does not track configuration changes over time (e.g., new detectors added, detector phase assignments changed, etc.), this system has a script that records the current intersection detector configuration each day. This daily configuration is then used for the subsequent calculations.
 
 The following scripts should be scheduled to run each day:
 ```Shell
