@@ -1,15 +1,17 @@
 Instructions to Implement ATSPM Dashboard
 =========================================
 
+## Requirements to set up the Environment
+
 There are several different steps needed to create the dashboard and it is somewhat complex, due to the environment and resources available when it was first created. In addition to the hardware and environment setup, it requires at least a basic knowledge of the Python and R programming languages, understanding of database connections, and the ability to do basic troubleshooting as every IT environment is a bit different. On the last point, a VPN may be required, or proxy authentication, for instance. In the future it is possible the installation of this system may require no understanding of the different programming languages, but that is not the case currently.
 
-For questions, please feel free to contact the developer at [alan.toppen@kimley-horn.com](mailto:alan.toppen@kimley-horn.com?subject=ATSPM%20Dashboard%Installation%Question) and I will assist as best I can.
+For questions, please feel free to contact the developer at [alan.toppen@kimley-horn.com](mailto:alan.toppen@kimley-horn.com?subject=ATSPM%20Dashboard%20Installation%20Question) and I will assist as best I can.
 
 It requires the following:
 
 - An ATSPM deployment (e.g., [https://traffic.dot.ga.gov/ATSPM](https://traffic.dot.ga.gov/ATSPM)), which consists of a server, database and programs to acquire high-resolution traffic data from signal controllers (see [https://www.fhwa.dot.gov/innovation/everydaycounts/edc_4/atspm.cfm](https://www.fhwa.dot.gov/innovation/everydaycounts/edc_4/atspm.cfm))
 
-- A workstation with:
+- An analysis workstation or server with:
     - Access to the ATSPM database
     - A few GB of local storage
     - [Anaconda for Python 3](https://www.anaconda.com/) with requisite packages installed
@@ -19,7 +21,7 @@ It requires the following:
 
 - A shinyapps.io account (http://www.shinyapps.io/)
 
-# Installation Steps
+## Installation Steps
 
 - Set up AWS S3
     - Create <name>-spm bucket and subfolder structure
@@ -108,12 +110,11 @@ LOCATION
 }
 ```
 
-
     - Create user AGENCY (e.g., GDOT, VDOT)
         - Assign to group
         - Create credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION)
 
-- Set up environment variables:
+- Set up environment variables on the analysis workstation or server:
 ```
     ATSPM_SERVER_INSTANCE
     ATSPM_DB             
@@ -124,12 +125,25 @@ LOCATION
     AWS_DEFAULT_REGION   
 ```
 
+- Clone this code to a folder on the analysis workstation or server
 - Create Monthly_Report_AWS.yaml
 - Create Monthly_Report_calcs.yaml
 - Create Monthly_Report.yaml
 - Create corridors file (adopt from Signals table in Controller_Event_Log in ATSPM Database
-- Create a folder with all Github files
 - Install R and RStudio
+
+## Run Calculations
+
+Unlike the ATSPM site, which runs all calculations from the raw data in the database for every chart requested by the user, this dashboard runs calculations daily and stores the aggregated data tables that are then read by the dashboard code to create the plots. Therefore, the analysis workstation or server should schedule the calculation scripts to run each day.
+
+The following scripts should be scheduled to run each day:
+```Shell
+python nightly_config.py
+Rscript Monthly_Report_Calcs.R
+Rscript Monthly_Report_Package.R
+```
+
+## Publish the Dashboard Online
 
 - Create account on shinyapps.io
 - Open Monthly_Report.Rmd and select "Run Document"
@@ -137,4 +151,4 @@ LOCATION
 - In shinyapps.io, go to dashboard and open Monthly_Report application settings
     - Increase instance size
     - Adjust Instance idle timeout, if desired
-    
+
