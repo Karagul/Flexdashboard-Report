@@ -21,7 +21,7 @@ It requires the following:
 
 # Installation Steps
 
-- Set up AWS S3, Athena, permissions
+- Set up AWS S3
     - Create <name>-spm bucket and subfolder structure
     
         /atspm_det_config
@@ -34,7 +34,8 @@ It requires the following:
         
         /signal_dashboards
 
-    - Create <name>_spm Athena database
+- Set up AWS Athena
+    - Create AGENCY_spm Athena database (e.g., gdot_spm, vdot_spm)
     - Create CycleData, DetectionEvents tables
     
 ```sql
@@ -57,11 +58,8 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
   'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
 LOCATION
-  's3://<name>-spm/cycles'```
-  
-    - Create CycleData, DetectionEvents tables
+  's3://<name>-spm/cycles'
 
-```sql
 CREATE EXTERNAL TABLE `detectionevents`(
   `signalid` int, 
   `phase` int, 
@@ -84,13 +82,13 @@ LOCATION
   's3://vdot-spm/detections'```
 
 
-    - Create IAM group/user with permissions
-        - Create IAM Group: <name>
-        - Attach the following policies
-            - AmazonS3FullAccess
-            - AmazonAthenaFullAccess
-            - IAMUserChangePassword
-        - Create a policy called JDBC with the following text:
+- Set up AWS IAM permissions  
+    - Create IAM Group: AGENCY (e.g., GDOT, VDOT)
+    - Attach the following policies
+        - AmazonS3FullAccess
+        - AmazonAthenaFullAccess
+        - IAMUserChangePassword
+    - Create a policy called JDBC with the following text:
 
 ```python
 {
@@ -106,10 +104,9 @@ LOCATION
             "Resource": "*"
         }
     ]
-}
-```
+}```
 
-    - Create user <name>
+    - Create user AGENCY (e.g., GDOT, VDOT)
         - Assign to group
         - Create credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION)
 
