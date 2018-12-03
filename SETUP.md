@@ -38,7 +38,7 @@ It requires the following:
     - Create AGENCY_spm Athena database (e.g., gdot_spm, vdot_spm)
     - Create CycleData, DetectionEvents tables
     
-```sql
+```HiveQL
 CREATE EXTERNAL TABLE `cycledata`(
   `signalid` int, 
   `phase` int, 
@@ -90,7 +90,7 @@ LOCATION
         - IAMUserChangePassword
     - Create a policy called JDBC with the following text:
 
-```python
+```JSON
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -104,7 +104,8 @@ LOCATION
             "Resource": "*"
         }
     ]
-}```
+}
+```
 
     - Create user AGENCY (e.g., GDOT, VDOT)
         - Assign to group
